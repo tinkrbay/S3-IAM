@@ -1,0 +1,64 @@
+Note: Since the engineering1 user is already a part of the engineering group., it will inherit the group permissions. In addition the below policy will be added creating a resultant policy which is an addition of the group + user policy (below)., making the permissions specific to this user. This policy is applied as an inline policy for the engineering1 user.
+
+First block: allows the engineering1 user to navigate into the engineering1 folder identified via the prefix engineering/engineering1/*
+
+Second block: specifically denies engineering1 user to navigate any other folders under engineering folder. This is expressed via the condition "StringNotLike", which says that all listing will be denied unless the prefix contains the specific prefix, i.e. engineering/engineering1/*. In this case if engineering1 user tries to navigate into engineering2 folder the deny action will be initiated since the navigate action will include the engineering2 folder's prefix which will be /engineering/engineering2/*
+
+Third block: allows the engineering2 user to get and put objects into the engineering1 folder identified by the resource (full path of the folder)
+
+COPY and PASTE the below policy as an inline policy for engineering1 user
+
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowListBucketIfSpecificPrefixIsIncludedInRequest",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::awsanh1"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "s3:prefix": [
+                        "engineering/engineering1/*"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "ExplicitlyDenyAnyRequestsForAllOtherFoldersExceptengineering1folder",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Effect": "Deny",
+            "Resource": [
+                "arn:aws:s3:::awsanh1/engineering/"
+            ],
+            "Condition": {
+                "StringNotLike": {
+                    "s3:prefix": [
+                        "engineering/engineering1/*"
+                    ]
+                },
+                "Null": {
+                    "s3:prefix": false
+                }
+            }
+        },
+        {
+            "Sid": "AllowUserToReadWriteObjectDataInengineering1Folder",
+            "Action": [
+                "s3:GetObject",
+                "s3:PutObject"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::awsanh1/engineering/engineering1/*"
+            ]
+        }
+    ]
+}

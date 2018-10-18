@@ -1,0 +1,53 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowListBucketIfSpecificPrefixIsIncludedInRequest",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::replacewithyourbucket"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "s3:prefix": [
+                        "marketing/marketing1/*"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "ExplicitlyDenyAnyRequestsForAllOtherFoldersExceptmarketing1folder",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Effect": "Deny",
+            "Resource": [
+                "arn:aws:s3:::replacewithyourbucket/marketing/"
+            ],
+            "Condition": {
+                "StringNotLike": {
+                    "s3:prefix": [
+                        "marketing/marketing1/*"
+                    ]
+                },
+                "Null": {
+                    "s3:prefix": false
+                }
+            }
+        },
+        {
+            "Sid": "AllowUserToReadWriteObjectDataInmarketing1Folder",
+            "Action": [
+                "s3:GetObject",
+                "s3:PutObject"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::replacewithyourbucket/marketing/marketing1/*"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+1st block: allows listing of all buckets under your root account and getting bucket locations to list them on the management console
+2nd block: allows listing of all folders under a specified bucket in the resource. Note the empty prefix and / as the delimiter
+3rd block: allows listing of all contents within a folder under a specified bucket. In this case, the policy will be applied to the engineering group, so the intent is that the users associated with this group should only be able to navigate into the engineering folder. Therefore the folder is identified via a prefix engineering/
+
+In a nutshell, all engineering users in the engineering group will be able to see all buckets, see all folders, i.e. engineering and marketing under the specified bucket, however will only be able to navigate into the engineering folder under the specififed bucket
+
+COPY and PASTE the below policy
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowGroupToSeeBucketListAndAlsoAllowGetBucketLocationRequiredForListBucket",
+            "Action": [
+                "s3:ListAllMyBuckets",
+                "s3:GetBucketLocation"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::*"
+            ]
+        },
+        {
+            "Sid": "AllowRootLevelListingOftheRootBucket",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::replacewithyourbucketname"
+            ],
+            "Condition": {
+                "StringEquals": {
+                    "s3:prefix": [
+                        ""
+                    ],
+                    "s3:delimiter": [
+                        "/"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "AllowListBucketIfSpecificPrefixIsIncludedInRequest",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::replacewithyourbucketname"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "s3:prefix": [
+                        "engineering/"
+                    ]
+                }
+            }
+        }
+    ]
+}
