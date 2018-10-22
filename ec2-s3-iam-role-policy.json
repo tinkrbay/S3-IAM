@@ -5,7 +5,7 @@
         "Effect": "Allow",
         "Action": [
             "s3:ListBucket",
-			"s3:GetBucketLocation"
+		"s3:GetBucketLocation"
         ],
        "Resource": [
             "arn:aws:s3:::<aws-s3-bucket-name>"
