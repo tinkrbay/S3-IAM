@@ -1,0 +1,35 @@
+On Trusted account (not Trusting account), you will need to implement a policy (either attached to a group or directly as an inline policy depending on how the Trusted account manages their IAM users
+
+The policy is noted below and allows for assuming cross-account roles via STS provisioning temporary credentials
+
+{
+  "Version": "2012-10-17",
+  "Statement": {
+    "Effect": "Allow",
+    "Action": "sts:AssumeRole",
+    "Resource": "ARN-OF-THE-CROSS-ACCOUNT-ROLE-CREATED-IN-TRUSTED-ACCOUNT"
+  }
+}
+
+NOTE: If you have multiple roles that can be assumed by a group/user in the TRUSTED account then the format would slightly vary. You can keeping appending in the below policy as required. Note if policy blocks are being appended or deleted, the use of "comma" after the policy block needs to be adjusted., the last block will not have "comma"
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Resource": "ARN-OF-THE-CROSS-ACCOUNT-ROLE-CREATED-IN-TRUSTED-ACCOUNT-1"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Resource": "ARN-OF-THE-CROSS-ACCOUNT-ROLE-CREATED-IN-TRUSTED-ACCOUNT-2"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Resource": "ARN-OF-THE-CROSS-ACCOUNT-ROLE-CREATED-IN-TRUSTED-ACCOUNT-n"
+        }
+    ]
+}
